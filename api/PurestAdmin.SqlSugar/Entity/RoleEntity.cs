@@ -18,4 +18,9 @@ public partial class RoleEntity : BaseEntity
     /// </summary>
     [SugarColumn(ColumnName = "DESCRIPTION")]
     public string Description { get; set; }
+    /// <summary>
+    /// 父级Id
+    /// </summary>
+    [SugarColumn(ColumnName = "PARENT_ID")]
+    public long? ParentId { get; set; }
 }

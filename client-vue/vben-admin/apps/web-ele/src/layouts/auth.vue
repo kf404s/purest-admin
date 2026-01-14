@@ -12,6 +12,7 @@ const logo = computed(() => preferences.logo.source);
 
 <template>
   <AuthPageLayout
+    :copyright="false"
     :app-name="appName"
     :logo="logo"
     :page-description="$t('authentication.pageDesc')"

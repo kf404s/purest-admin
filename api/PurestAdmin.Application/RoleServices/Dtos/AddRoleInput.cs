@@ -22,9 +22,9 @@ public class AddRoleInput
     /// </summary>
     [MaxLength(200, ErrorMessage = "角色描述最大长度为：200")]
     public string Description { get; set; }
-
     /// <summary>
-    /// 权限Id集合
+    /// 父级Id
     /// </summary>
-    public long[] SecurityIds { get; set; }
+    [Required(ErrorMessage = "父级Id不能为空")]
+    public long ParentId { get; set; }
 }

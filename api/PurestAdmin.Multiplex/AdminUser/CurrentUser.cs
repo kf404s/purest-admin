@@ -34,6 +34,13 @@ public class CurrentUser(ISqlSugarClient db, IHttpContextAccessor httpContextAcc
         get => long.Parse(_httpContextAccessor.HttpContext?.User.FindFirst(AdminClaimConst.USER_ID)?.Value ?? throw PersistdValidateException.Message("令牌超时，请重新登录！"));
     }
     /// <summary>
+    /// 角色Id
+    /// </summary>
+    public long RoleId
+    {
+        get => long.Parse(_httpContextAccessor.HttpContext?.User.FindFirst(AdminClaimConst.ROLE_ID)?.Value ?? throw PersistdValidateException.Message("令牌超时，请重新登录！"));
+    }
+    /// <summary>
     /// 组织机构Id
     /// </summary>
     public long OrganizationId
@@ -108,5 +115,24 @@ public class CurrentUser(ISqlSugarClient db, IHttpContextAccessor httpContextAcc
             organization.Children = organizationChildren;
         }
         return [organization];
+    }
+
+    /// <summary>
+    /// 用户的角色树
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<RoleEntity>> GetRoleTreeAsync()
+    {
+        var roleId = RoleId;
+
+        var role = await _db.Queryable<RoleEntity>().FirstAsync(x => x.Id == roleId) ?? throw PersistdValidateException.Message("无法找到当前登录用户的角色，请联系管理检查数据");
+
+        var roleChildren = await _db.Queryable<RoleEntity>().OrderByDescending(x => x.Id).ToTreeAsync(x => x.Children, x => x.ParentId, roleId);
+
+        if (roleChildren != null)
+        {
+            role.Children = roleChildren;
+        }
+        return [role];
     }
 }

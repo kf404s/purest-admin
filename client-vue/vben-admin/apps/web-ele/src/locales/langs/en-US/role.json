@@ -5,7 +5,7 @@
   "columns": {
     "name": "Role Name",
     "description": "Description",
-    "remark": "Remark",
+    "remark": "Remarks",
     "functions": "Functions"
   },
   "search": {
@@ -13,15 +13,18 @@
   },
   "form": {
     "name": "Role Name",
+    "parentId": "Parent Role",
     "description": "Description",
-    "remark": "Remark",
+    "remark": "Remarks",
     "placeholder": {
       "name": "Please enter role name",
+      "parentId": "Please select parent role",
       "description": "Please enter description",
-      "remark": "Please enter remark"
+      "remark": "Please enter remarks"
     },
     "validate": {
-      "name": "Please enter role name"
+      "name": "Please enter role name",
+      "parentId": "Please select parent role"
     }
   }
 }

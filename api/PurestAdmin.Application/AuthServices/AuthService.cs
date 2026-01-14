@@ -75,6 +75,7 @@ public class AuthService(IOAuth2UserManager oAuth2UserManager, IHubContext<Autho
         var claims = new[]
         {
             new Claim(AdminClaimConst.USER_ID,user.Id.ToString()),
+            new Claim(AdminClaimConst.ROLE_ID,userRole.RoleId.ToString()),
             new Claim(AdminClaimConst.USER_NAME,user.Name),
             new Claim(AdminClaimConst.ORGANIZATION_ID,user.OrganizationId.ToString()),
         };
@@ -249,19 +250,19 @@ public class AuthService(IOAuth2UserManager oAuth2UserManager, IHubContext<Autho
     /// </summary>
     /// <returns></returns>
     public async Task<List<GetOrganizationTreeOutput>> GetOrganizationTreeAsync()
-    {
-        var organizationId = _currentUser.OrganizationId;
-
-        var organization = await _db.Queryable<OrganizationEntity>().FirstAsync(x => x.Id == organizationId) ?? throw PersistdValidateException.Message("无法找到当前登录用户的组织机构，请联系管理检查数据");
-
-        var organizationChildren = await _db.Queryable<OrganizationEntity>().OrderByDescending(x => x.Sort).ToTreeAsync(x => x.Children, x => x.ParentId, organizationId);
-
-        if (organizationChildren != null)
-        {
-            organization.Children = organizationChildren;
-        }
-        var result = new List<OrganizationEntity>() { organization };
+    {        
+        var result = await _currentUser.GetOrganizationTreeAsync();
         return result.Adapt<List<GetOrganizationTreeOutput>>();
+    }
+
+    /// <summary>
+    /// 获取当前用户角色树
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<GetRoleTreeOutput>> GetRoleTreeAsync()
+    {
+        var result = await _currentUser.GetRoleTreeAsync();
+        return result.Adapt<List<GetRoleTreeOutput>>();
     }
 
     /// <summary>

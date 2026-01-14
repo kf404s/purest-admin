@@ -2,17 +2,19 @@
 
 using PurestAdmin.Application.RoleServices.Dtos;
 using PurestAdmin.Core.Cache;
+using PurestAdmin.Multiplex.Contracts.IAdminUser;
 
 namespace PurestAdmin.Application.RoleServices;
 /// <summary>
 /// 角色服务
 /// </summary>
 [ApiExplorerSettings(GroupName = ApiExplorerGroupConst.SYSTEM)]
-public class RoleService(ISqlSugarClient db, Repository<RoleEntity> roleRepository, IAdminCache cache) : ApplicationService
+public class RoleService(ISqlSugarClient db, Repository<RoleEntity> roleRepository, IAdminCache cache, ICurrentUser currentUser) : ApplicationService
 {
     private readonly ISqlSugarClient _db = db;
     private readonly Repository<RoleEntity> _roleRepository = roleRepository;
     private readonly IAdminCache _cache = cache;
+    private readonly ICurrentUser _currentUser = currentUser;
     /// <summary>
     /// 分页查询
     /// </summary>
@@ -20,11 +22,29 @@ public class RoleService(ISqlSugarClient db, Repository<RoleEntity> roleReposito
     /// <returns></returns>
     public async Task<PagedList<RoleOutput>> GetPagedListAsync(GetPagedListInput input)
     {
-        var pagedList = await _db.Queryable<RoleEntity>()
-            .WhereIF(!input.Name.IsNullOrEmpty(), x => x.Name.Contains(input.Name))
-            .OrderByDescending(x => x.CreateTime)
-            .ToPurestPagedListAsync(input.PageIndex, input.PageSize);
-        return pagedList.Adapt<PagedList<RoleOutput>>();
+        var roles = await _currentUser.GetRoleTreeAsync();
+        var roleOutputs = roles.First().Children.Adapt<List<RoleOutput>>();
+        if (!input.Name.IsNullOrEmpty())
+        {
+            List<RoleOutput> FilterRoles(List<RoleOutput> all)
+            {
+                List<RoleOutput> ls = [];
+                foreach (var item in all)
+                {
+                    if (item.Name.Contains(input.Name))
+                    {
+                        ls.Add(item);
+                    }
+                    if (item.Children?.Count > 0)
+                    {
+                        ls.AddRange(FilterRoles(item.Children));
+                    }
+                }
+                return ls;
+            }
+            return FilterRoles(roleOutputs).ToPurestPagedList(input.PageIndex, input.PageSize); ;
+        }
+        return roleOutputs.ToPurestPagedList(input.PageIndex, input.PageSize);
     }
 
     /// <summary>

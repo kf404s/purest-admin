@@ -1,13 +1,13 @@
 // Copyright © 2023-present https://github.com/dymproject/purest-admin作者以及贡献者
 
-using PurestAdmin.Application.OrganizationServices.Dtos;
+using PurestAdmin.Application.RoleServices.Dtos;
 
-namespace PurestAdmin.Application.RoleServices.Dtos;
+namespace PurestAdmin.Application.AuthServices.Dtos;
 
 /// <summary>
 /// 角色详情
 /// </summary>
-public class RoleOutput
+public class GetRoleTreeOutput
 {
     /// <summary>
     /// 主键Id

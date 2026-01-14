@@ -13,13 +13,14 @@ const reVxeGridRef = ref();
 const columns = [
   { type: 'checkbox', title: '', width: 60, align: 'center' },
   {
-    title: 'Id',
-    field: 'id',
-    minWidth: 100,
-  },
-  {
     title: $t('role.columns.name'),
     field: 'name',
+    minWidth: 100,
+    treeNode: true,
+  },
+  {
+    title: 'Id',
+    field: 'id',
     minWidth: 100,
   },
   {

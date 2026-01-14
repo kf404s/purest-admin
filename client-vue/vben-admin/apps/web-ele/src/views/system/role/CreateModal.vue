@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, h } from 'vue';
 import type { VxeFormPropTypes } from 'vxe-pc-ui';
 import { getSingle, submitData } from '#/api/system/role';
+import { ReRoleTreeSelect } from '#/components/role';
 import { $t } from '@vben/locales';
 const emits = defineEmits<{ (e: 'reload'): void }>();
 const reModalRef = ref();
 interface AddRoleInput {
+  parentId: number | null;
   name: string;
   description: string;
   remark: string;
@@ -14,6 +16,7 @@ const formRef = ref();
 const defaultFormData = () => {
   return {
     name: '',
+    parentId: null,
     description: '',
     remark: '',
   };
@@ -27,6 +30,23 @@ const formItems = ref<VxeFormPropTypes.Items>([
     itemRender: {
       name: '$input',
       props: { placeholder: $t('role.form.placeholder.name') },
+    },
+  },
+  {
+    field: 'parentId',
+    title: $t('role.form.parentId'),
+    span: 24,
+    slots: {
+      default: ({ data }) => [
+        h(ReRoleTreeSelect, {
+          modelValue: data.parentId,
+          placeholder: $t('role.form.placeholder.parentId'),
+          onNodeClick(nodeData: any) {
+            formData.value.parentId = nodeData.id;
+            formRef.value?.validateField('parentId');
+          },
+        }),
+      ],
     },
   },
   {
@@ -50,6 +70,7 @@ const formItems = ref<VxeFormPropTypes.Items>([
 ]);
 const formRules = ref<VxeFormPropTypes.Rules>({
   name: [{ required: true, message: $t('role.form.validate.name') }],
+  parentId: [{ required: true, message: $t('role.form.validate.parentId') }],
 });
 
 const showAddModal = () => {

@@ -13,12 +13,13 @@ namespace PurestAdmin.Application.UserServices;
 /// </summary>
 [ApiExplorerSettings(GroupName = ApiExplorerGroupConst.SYSTEM)]
 public class UserService(ISqlSugarClient db, Repository<UserEntity> userRepository,
-    IHubContext<OnlineUserHub, IOnlineUserClient> hubContext, ICacheOnlineUser cacheOnlineUser) : ApplicationService
+    IHubContext<OnlineUserHub, IOnlineUserClient> hubContext, ICacheOnlineUser cacheOnlineUser, ICurrentUser currentUser) : ApplicationService
 {
     private readonly ISqlSugarClient _db = db;
     private readonly Repository<UserEntity> _userRepository = userRepository;
     private readonly IHubContext<OnlineUserHub, IOnlineUserClient> _hubContext = hubContext;
     private readonly ICacheOnlineUser _cacheOnlineUser = cacheOnlineUser;
+    private readonly ICurrentUser _currentUser = currentUser;
     /// <summary>
     /// 分页查询
     /// </summary>
@@ -26,9 +27,11 @@ public class UserService(ISqlSugarClient db, Repository<UserEntity> userReposito
     /// <returns></returns>
     public async Task<PagedList<UserOutput>> GetPagedListAsync(GetPagedListInput input)
     {
+        var roleIds = (await _db.Queryable<RoleEntity>().ToChildListAsync(x => x.ParentId, _currentUser.RoleId)).Select(x => x.Id);
         var pagedList = await _db.Queryable<UserEntity>()
             .LeftJoin<UserRoleEntity>((u, ur) => u.Id == ur.UserId)
             .LeftJoin<RoleEntity>((u, ur, r) => ur.RoleId == r.Id)
+            .Where((u, ur, r) => roleIds.Contains(ur.RoleId))
             .WhereIF(!input.Name.IsNullOrEmpty(), (u) => u.Name.Contains(input.Name))
             .WhereIF(!input.Account.IsNullOrEmpty(), (u) => u.Account.Contains(input.Account, StringComparison.CurrentCultureIgnoreCase))
             .WhereIF(!input.Telephone.IsNullOrEmpty(), (u) => u.Telephone.Contains(input.Telephone))

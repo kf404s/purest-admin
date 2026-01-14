@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ref, h, onBeforeMount, nextTick } from 'vue';
-import { VxeSelect, type VxeFormPropTypes } from 'vxe-pc-ui';
+import { type VxeFormPropTypes } from 'vxe-pc-ui';
 import { ReOrganizationTreeSelect } from '#/components/organization';
+import { ReRoleTreeSelect } from '#/components/role';
 import { getAllList } from '#/api/system/role';
 import { getSingle, submitData } from '#/api/system/user';
 import { $t } from '#/locales';
@@ -57,16 +58,12 @@ const formItems = ref<VxeFormPropTypes.Items>([
     span: 12,
     slots: {
       default: ({ data }) => [
-        h(VxeSelect, {
-          options: roleOptions.value,
-          optionProps: {
-            value: 'id',
-            label: 'name',
-          },
-          placeholder: $t('user.form.placeholder.role'),
+        h(ReRoleTreeSelect, {
           modelValue: data.roleId,
-          onChange(v) {
-            data.roleId = v.value;
+          placeholder: $t('user.form.placeholder.role'),
+          onNodeClick(nodeData: any) {
+            formData.value.roleId = nodeData.id;
+            formRef.value.validateField('roleId');
           },
         }),
       ],

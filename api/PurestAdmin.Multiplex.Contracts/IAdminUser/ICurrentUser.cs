@@ -15,6 +15,11 @@ public interface ICurrentUser
     long Id { get; }
 
     /// <summary>
+    /// 角色 Id
+    /// </summary>
+    long RoleId { get; }
+
+    /// <summary>
     /// 组织机构Id
     /// </summary>
     long OrganizationId { get; }
@@ -41,4 +46,10 @@ public interface ICurrentUser
     /// </summary>
     /// <returns></returns>
     Task<List<OrganizationEntity>> GetOrganizationTreeAsync();
+
+    /// <summary>
+    /// 用户的角色树
+    /// </summary>
+    /// <returns></returns>
+    Task<List<RoleEntity>> GetRoleTreeAsync();
 }

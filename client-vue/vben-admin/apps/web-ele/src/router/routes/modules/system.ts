@@ -10,6 +10,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'tdesign:system-setting-filled',
       keepAlive: true,
       order: 900,
+      authority: ['system'],
       title: $t('page.system.title'),
     },
     name: 'System',
@@ -18,6 +19,8 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('page.system.user.title'),
+          authority: ['system.user'],
+          icon: `tdesign:user-list`,
         },
         name: 'User',
         path: '/system/user',
@@ -26,6 +29,8 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('page.system.role.title'),
+          authority: ['system.role'],
+          icon: `tdesign:usergroup`,
         },
         name: 'Role',
         path: '/system/role',
@@ -34,6 +39,8 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('page.system.function.title'),
+          authority: ['system.function'],
+          icon: `tdesign:application`,
         },
         name: 'Function',
         path: '/system/function',
@@ -42,6 +49,8 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('page.system.organization.title'),
+          authority: ['system.organization'],
+          icon: `tdesign:tree-list`,
         },
         name: 'Organization',
         path: '/system/organization',
@@ -50,6 +59,8 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('page.system.dict.title'),
+          authority: ['system.dictionary'],
+          icon: `tdesign:book`,
         },
         name: 'Dict',
         path: '/system/dict',
@@ -58,6 +69,8 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('page.system.config.title'),
+          authority: ['system.systemconfig'],
+          icon: `tdesign:file-setting`,
         },
         name: 'Config',
         path: '/system/config',
@@ -66,6 +79,8 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('page.system.onlineUser.title'),
+          authority: ['system.onlineuser'],
+          icon: 'tdesign:user-talk',
         },
         name: 'OnlineUser',
         path: '/system/online-user',
