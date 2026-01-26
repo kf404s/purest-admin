@@ -7,6 +7,14 @@ export interface OrganizationTreeNode {
   children?: OrganizationTreeNode[];
   remark: string;
 }
+/** 角色树节点 */
+export interface RoleTreeNode {
+  id: number;
+  name: string;
+  children?: RoleTreeNode[];
+  remark: string;
+}
+
 export interface UserInfo {
   name: string;
   telephone: string;
@@ -65,4 +73,9 @@ export const getSystemPlatformInfo = () => {
 
 export const getUnReadNotice = () => {
   return http.request("get", "/auth/unread-notice");
+};
+
+/** 获取角色树 */
+export const getRoleTreeData = () => {
+  return http.request<RoleTreeNode>('get', '/auth/role-tree');
 };

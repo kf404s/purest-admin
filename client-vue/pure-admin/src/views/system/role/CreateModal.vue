@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { ref, nextTick, reactive } from "vue";
+import { ref, nextTick, reactive, h } from "vue";
 import { VxeFormPropTypes, VxeFormInstance, VxeModalInstance } from "vxe-pc-ui";
 import { getSingle, submitData } from "@/api/system/role";
+import { ReRoleTreeSelect } from "@/components/ReRoleTreeSelect";
 const emits = defineEmits<{ (e: "reload"): void }>();
 const vxeModalRef = ref<VxeModalInstance>();
 const modalOptions = reactive<{
@@ -22,6 +23,7 @@ const showModal = (title: string, canSubmit?: boolean): void => {
 
 interface AddRoleInput {
   name: string;
+  parentId: number | null;
   description: string;
   remark: string;
 }
@@ -29,6 +31,7 @@ const formRef = ref<VxeFormInstance>();
 const defaultFormData = () => {
   return {
     name: "",
+    parentId: null,
     description: "",
     remark: ""
   };
@@ -42,6 +45,22 @@ const formItems = ref<VxeFormPropTypes.Items>([
     itemRender: {
       name: "$input",
       props: { placeholder: "请输入角色名称" }
+    }
+  },
+  {
+    field: "parentId",
+    title: "父级角色",
+    span: 24,
+    slots: {
+      default: ({ data }) => [
+        h(ReRoleTreeSelect, {
+          modelValue: data.parentId,
+          onNodeClick(nodeData: Recordable) {
+            formData.value.parentId = nodeData.id;
+            formRef.value.validateField("parentId");
+          }
+        })
+      ]
     }
   },
   {
@@ -64,7 +83,8 @@ const formItems = ref<VxeFormPropTypes.Items>([
   }
 ]);
 const formRules = ref<VxeFormPropTypes.Rules>({
-  name: [{ required: true, message: "请输入角色名" }]
+  name: [{ required: true, message: "请输入角色名" }],
+  parentId: [{ required: true, message: "请选择父级角色" }]
 });
 
 const showAddModal = () => {

@@ -2,6 +2,7 @@
 import { ref, h, onBeforeMount, nextTick, reactive } from "vue";
 import { VxeFormPropTypes, VxeSelect } from "vxe-pc-ui";
 import { ReOrganizationTreeSelect } from "@/components/ReOrganizationTreeSelect";
+import { ReRoleTreeSelect } from "@/components/ReRoleTreeSelect";
 import { getAllList } from "@/api/system/role";
 import { getSingle, submitData } from "@/api/system/user";
 const emits = defineEmits<{ (e: "reload"): void }>();
@@ -69,16 +70,11 @@ const formItems = ref<VxeFormPropTypes.Items>([
     span: 24,
     slots: {
       default: ({ data }) => [
-        h(VxeSelect, {
-          options: roleOptions.value,
-          optionProps: {
-            value: "id",
-            label: "name"
-          },
-          placeholder: "请选择角色",
+        h(ReRoleTreeSelect, {
           modelValue: data.roleId,
-          onChange(v) {
-            data.roleId = v.value;
+          onNodeClick(nodeData: Recordable) {
+            formData.value.roleId = nodeData.id;
+            formRef.value.validateField("roleId");
           }
         })
       ]
@@ -179,8 +175,8 @@ defineExpose({ showAddModal, showEditModal, showViewModal });
   <vxe-modal
     ref="vxeModalRef"
     v-model="modalOptions.modalValue"
-    width="600"
-    height="500"
+    width="800"
+    height="600"
     showFooter
     :title="modalOptions.modalTitle"
   >
