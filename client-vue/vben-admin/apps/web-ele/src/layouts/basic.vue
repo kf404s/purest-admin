@@ -16,12 +16,14 @@ import {
 import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
-
+import { createIconifyIcon } from '@vben/icons';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
 import { ElMessage } from 'element-plus';
-
+import Password from './password.vue';
+const passwordRef = ref<InstanceType<typeof Password>>();
+const passkeyIcon = createIconifyIcon('material-symbols:passkey-rounded');
 const onlineUserStore = useOnlineUserStore();
 const connection = onlineUserStore.createConnection();
 connection.on('logout', () => {
@@ -70,6 +72,13 @@ const showDot = computed(() =>
 );
 
 const menus = computed(() => [
+  {
+    handler: () => {
+      passwordRef.value?.showPasswordPopup();
+    },
+    icon: passkeyIcon,
+    text: '修改密码',
+  },
   {
     handler: () => {
       openWindow(VBEN_DOC_URL, {
@@ -167,4 +176,5 @@ onUnmounted(() => {
       <LockScreen :avatar="avatar" @to-login="handleLogout" />
     </template>
   </BasicLayout>
+  <Password ref="passwordRef" />
 </template>

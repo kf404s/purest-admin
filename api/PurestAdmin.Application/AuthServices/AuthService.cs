@@ -246,6 +246,19 @@ public class AuthService(IOAuth2UserManager oAuth2UserManager, IHubContext<Autho
     }
 
     /// <summary>
+    /// 修改密码
+    /// </summary>
+    /// <returns></returns>
+    public async Task PutChangePasswordAsync(PutChangePasswordInput input)
+    {
+        var claimUserId = _currentUser.Id;
+        var encryptPassword = MD5Encryption.Encrypt(input.OldPassword);
+        var user = await _db.Queryable<UserEntity>().FirstAsync(x => x.Id == _currentUser.Id && x.Password == encryptPassword) ?? throw BusinessValidateException.Message("旧密码不正确");
+        user.Password = MD5Encryption.Encrypt(input.NewPassword);
+        await _db.Updateable(user).ExecuteCommandAsync();
+    }
+
+    /// <summary>
     /// 获取当前用户组织机构树
     /// </summary>
     /// <returns></returns>

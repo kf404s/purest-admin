@@ -70,3 +70,10 @@ export const getOrganizationTreeData = () => {
 export const getRoleTreeData = () => {
   return requestClient.get<AuthApi.RoleTreeNode[]>('/auth/role-tree');
 };
+
+/**
+ * 修改密码
+ */
+export  function changePassword(data: { oldPassword: string; newPassword: string }) {
+  return requestClient.put('/auth/change-password', data);
+}

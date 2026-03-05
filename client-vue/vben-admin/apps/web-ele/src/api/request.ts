@@ -111,13 +111,20 @@ function createRequestClient(baseURL: string) {
         response: { data },
         status,
       } = error;
+      const { validationErrors } = error;
       switch (status) {
         case HttpStatusCode.Unauthorized:
           const authStore = useAuthStore();
           authStore.logout();
           break;
         case HttpStatusCode.BadRequest:
-          ElMessage.warning(data.error?.message || msg);
+          if (Array.isArray(validationErrors)) {
+            validationErrors.forEach((element) => {
+              ElMessage.warning(element.message);
+            });
+          } else {
+            ElMessage.warning(data.error?.message || msg);
+          }
           break;
         case HttpStatusCode.Forbidden:
           ElMessage.warning(data.error?.message || msg);
